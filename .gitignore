@@ -1,0 +1,6 @@
+app.apk
+app.apk.idsig
+arm*
+build
+ids.txt
+keystore.jks
