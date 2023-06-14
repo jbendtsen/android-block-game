@@ -8,13 +8,12 @@ static int _copy_string(char *dst, const char *src) {
 	return len;
 }
 
-static char _board_vertex_text[941];
+static char _board_vertex_text[940];
 
 static const char *make_board_vertex_shader(float arg0, float arg1, float arg2, float arg3, float arg4, float arg5, int arg6) {
 	int offset = 0;
 
 	offset += _copy_string(_board_vertex_text + offset,
-		"\n"
 		"#version 300 es\n"
 		"precision mediump float;\n"
 		"layout (location = 0) in vec4 color_and_pos;\n"
@@ -81,13 +80,12 @@ static const char *make_board_vertex_shader(float arg0, float arg1, float arg2, 
 	return &_board_vertex_text[0];
 }
 
-static char _board_fragment_text[125];
+static char _board_fragment_text[124];
 
 static const char *make_board_fragment_shader() {
 	int offset = 0;
 
 	offset += _copy_string(_board_fragment_text + offset,
-		"\n"
 		"#version 300 es\n"
 		"precision mediump float;\n"
 		"in vec3 rgb;\n"
@@ -102,13 +100,12 @@ static const char *make_board_fragment_shader() {
 	return &_board_fragment_text[0];
 }
 
-static char _pause_vertex_text[372];
+static char _pause_vertex_text[371];
 
 static const char *make_pause_vertex_shader() {
 	int offset = 0;
 
 	offset += _copy_string(_pause_vertex_text + offset,
-		"\n"
 		"#version 300 es\n"
 		"precision highp float;\n"
 		"layout (location = 0) uniform float y_offset;\n"
@@ -127,13 +124,12 @@ static const char *make_pause_vertex_shader() {
 	return &_pause_vertex_text[0];
 }
 
-static char _pause_fragment_text[9214];
+static char _pause_fragment_text[9213];
 
 static const char *make_pause_fragment_shader(const char **arg0, int arg0_len) {
 	int offset = 0;
 
 	offset += _copy_string(_pause_fragment_text + offset,
-		"\n"
 		"#version 300 es\n"
 		"precision highp float;\n"
 		"precision highp int;\n"

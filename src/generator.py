@@ -34,7 +34,12 @@ def main(path):
         params = []
         parts = []
         cur_part = ""
+        seen_version = False
         for line in shader[1:]:
+            if line.startswith("#version"):
+                seen_version = True
+            if not seen_version:
+                continue
             cur_part += "\t\t\""
             prev = None
             for c in line:

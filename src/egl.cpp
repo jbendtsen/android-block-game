@@ -17,42 +17,24 @@
 int GL_Context::init(void *window, float *grid_colors)
 {
 	const EGLint attribs[] = {
+	    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT_KHR,
 		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		//EGL_NATIVE_RENDERABLE, EGL_TRUE,
 		EGL_BLUE_SIZE, 8,
 		EGL_GREEN_SIZE, 8,
 		EGL_RED_SIZE, 8,
-		EGL_NATIVE_RENDERABLE, EGL_TRUE,
-		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT_KHR,
 		EGL_NONE
 	};
 
 	EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	this->display = display;
-	eglInitialize(display, 0, 0);
+	auto res_init = eglInitialize(display, 0, 0);
 
-	EGLint n_configs = 0;
-	eglChooseConfig(display, attribs, NULL, 0, &n_configs);
+    EGLint n_configs;
+	EGLConfig cfg;
+	eglChooseConfig(display, attribs, &cfg, 1, &n_configs);
 
-	EGLConfig cfg = NULL;
-	EGLConfig *configs = (EGLConfig*)alloca(n_configs * sizeof(EGLConfig));
-	eglChooseConfig(display, attribs, configs, n_configs, &n_configs);
-
-	for (int i = 0; i < n_configs; i++) {
-		EGLint r, g, b, d;
-		if (eglGetConfigAttrib(display, configs[i], EGL_RED_SIZE, &r) &&
-			eglGetConfigAttrib(display, configs[i], EGL_GREEN_SIZE, &g) &&
-			eglGetConfigAttrib(display, configs[i], EGL_BLUE_SIZE, &b) &&
-			eglGetConfigAttrib(display, configs[i], EGL_DEPTH_SIZE, &d) &&
-			r == 8 && g == 8 && b == 8 && d == 0
-		) {
-			cfg = configs[i];
-			break;
-		}
-	}
-	if (!cfg)
-		cfg = configs[0];
-	if (!cfg)
-		return -1;
+    __android_log_print(ANDROID_LOG_INFO, "gl_ctx_init", "could not find egl config");
 
 	EGLint format;
 	eglGetConfigAttrib(display, cfg, EGL_NATIVE_VISUAL_ID, &format);
@@ -67,8 +49,10 @@ int GL_Context::init(void *window, float *grid_colors)
 	};
 	EGLContext context = eglCreateContext(display, cfg, EGL_NO_CONTEXT, context_attribs);
 	this->context = context;
-	if (!eglMakeCurrent(display, surface, surface, context))
+	if (!eglMakeCurrent(display, surface, surface, context)) {
+	    __android_log_print(ANDROID_LOG_INFO, "gl_ctx_init", "eglMakeCurrent() failed");
 		return -2;
+	}
 
 	EGLint w, h;
 	eglQuerySurface(display, surface, EGL_WIDTH, &w);

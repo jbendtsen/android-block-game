@@ -66,8 +66,12 @@ void handle_app_command(int cmd)
 		}
 		case APP_CMD_WINDOW_CREATED:
 		{
-			app_global.egl.init(app_global.window, app_global.grid_colors);
-			app_global.egl_available = true;
+		    app_global.egl_available = true;
+			if (app_global.egl.init(app_global.window, app_global.grid_colors) < 0) {
+			    app_global.egl_available = false;
+			    app_global.egl.quit();
+			    app_global.running = false;
+			}
 			break;
 		}
 		case APP_CMD_WINDOW_REDRAW_NEEDED:
@@ -195,6 +199,9 @@ void *app_main(void *data)
 			handle_app_command(cmd);
 		}
 
+		if (!app_global.running)
+			break;
+
 		AInputEvent *event = NULL;
 		while (app_global.input_queue && AInputQueue_getEvent(app_global.input_queue, &event) >= 0) {
 			if (AInputQueue_preDispatchEvent(app_global.input_queue, event))
@@ -207,9 +214,6 @@ void *app_main(void *data)
 
 			AInputQueue_finishEvent(app_global.input_queue, event, handled);
 		}
-
-		if (!app_global.running)
-			break;
 
 		if (!app_global.egl_available) {
 			usleep(10000);
